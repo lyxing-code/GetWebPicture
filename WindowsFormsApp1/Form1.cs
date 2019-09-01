@@ -24,7 +24,15 @@ namespace WindowsFormsApp1
       
         private void button1_Click(object sender, EventArgs e)
         {
-           //匹配需要的下载链接
+            Thread thread = new Thread(CatchImg);
+            thread.Start();
+            thread.Join();
+        }
+
+
+        public void CatchImg()
+        {
+            //匹配需要的下载链接
             Regex reg = new Regex("<img src=\"(?<Link>[\\S]+)\"", RegexOptions.Compiled);
             //模拟浏览器请求一个链接地址
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(txtUrl.Text);
@@ -40,7 +48,7 @@ namespace WindowsFormsApp1
                 string html = sr.ReadToEnd();
                 //关闭流
                 sr.Close();
-                
+
                 //创建用来存储图片数据流的流对象
                 Stream stream;
 
@@ -66,14 +74,14 @@ namespace WindowsFormsApp1
                         //设置文件名称
                         string filename = DateTime.Now.ToString("yyyyMMddhhmmss") + ".jpg";
                         //创建图片 来接收浏览器响应的数据流 并且存储到以下路径中
-                        Image.FromStream(stream).Save(@"E:\项目\GetInfoapp\WindowsFormsApp1\WindowsFormsApp1\images\" + filename);
-
+                        Image.FromStream(stream).Save(@"E:\项目\ASP.net\实训\项目\C#爬取图片\web信息爬取\images\" + filename);
+                        Thread.Sleep(1000);
                         //----------------------//
                         //将项目中的图片添加到imageList1中
-                        imageList1.Images.Add(Image.FromFile(Path.Combine(@"E:\项目\GetInfoapp\WindowsFormsApp1\WindowsFormsApp1\images\", filename)));
-                        
+                        imageList1.Images.Add(Image.FromFile(Path.Combine(@"E:\项目\ASP.net\实训\项目\C#爬取图片\web信息爬取\images\", filename)));
+
                     }
-                    catch (Exception)
+                    catch (Exception e)
                     {
                         num = num - 1;
                         continue;
@@ -95,8 +103,9 @@ namespace WindowsFormsApp1
             }
 
 
+
         }
-        
+
         private void 抓取图片_Load(object sender, EventArgs e)
         {
             listView1.Visible = false;
